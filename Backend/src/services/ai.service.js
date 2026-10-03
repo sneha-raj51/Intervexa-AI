@@ -70,7 +70,9 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 
 
 async function generatePdfFromHtml(htmlContent) {
-    const browser = await puppeteer.launch()
+    const browser = await puppeteer.launch({
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    })
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: "networkidle0" })
 
@@ -158,6 +160,7 @@ const resumeAnalysisSchemaZod = z.object({
 
 async function analyzeResume({ resume, jobDescription }) {
     const prompt = `Analyze the following Resume for a candidate. 
+    Current Date: ${new Date().toISOString().split('T')[0]}
     Resume: ${resume}
     Target Job Description (optional): ${jobDescription}
 
@@ -169,6 +172,8 @@ async function analyzeResume({ resume, jobDescription }) {
     2. If a skill is required in the JD but missing from the resume, list it in matchBreakdown.missingSkills and clearly state it is missing. DO NOT tell the user to blindly add it unless they have genuine experience.
     3. Do NOT fabricate percentages or precise numbers if there is no data to support them. 
     4. Provide honest, actionable improvements.
+    5. Be robust to formatting: "B.Tech" or "Course" counts as Education. "Certificates" or "Licenses" counts as Certifications. DO NOT mark them as missing if present.
+    6. Properly calculate past/current/future dates based ONLY on the "Current Date" provided above. For example, if current date is Oct 2026, then July 2026 is in the PAST. DO NOT mark past dates as future dates.
     `
 
     let response;
