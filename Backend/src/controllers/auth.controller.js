@@ -44,7 +44,8 @@ async function registerUserController(req, res) {
 
     res.cookie("token", token, {
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === 'production',
         path: '/',
         maxAge: 24 * 60 * 60 * 1000
     })
@@ -95,7 +96,8 @@ async function loginUserController(req, res) {
 
     res.cookie("token", token, {
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === 'production',
         path: '/',
         maxAge: 24 * 60 * 60 * 1000
     })
@@ -122,7 +124,12 @@ async function logoutUserController(req, res) {
         await tokenBlacklistModel.create({ token })
     }
 
-    res.clearCookie("token")
+    res.clearCookie("token", {
+        httpOnly: true,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/'
+    })
 
     res.status(200).json({
         message: "User logged out successfully"
