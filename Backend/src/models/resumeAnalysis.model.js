@@ -39,6 +39,21 @@ const resumeAnalysisSchema = new mongoose.Schema({
             status: String,
             observations: String,
             suggestions: String
+        },
+        education: {
+            status: String,
+            observations: String,
+            suggestions: String
+        },
+        certifications: {
+            status: String,
+            observations: String,
+            suggestions: String
+        },
+        skills: {
+            status: String,
+            observations: String,
+            suggestions: String
         }
     },
     jdIntelligence: {
