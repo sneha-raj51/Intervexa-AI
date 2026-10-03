@@ -1,0 +1,115 @@
+@use "../../../style/variables" as *;
+
+.activity-page {
+    width: 100%;
+}
+
+.activity-container {
+    width: min(1100px, calc(100% - 48px));
+    margin-inline: auto;
+    padding: 40px 0 80px;
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    .filters-bar {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 28px auto 36px;
+
+        .filter-chip {
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: $bg-secondary;
+            border: 1px solid $border-color;
+            color: $text-secondary;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: rgba($primary, 0.1);
+                color: $primary;
+            }
+
+            &.active {
+                background: rgba($primary, 0.2);
+                color: $primary;
+                border-color: $primary;
+            }
+        }
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+        width: min(850px, 100%);
+        margin-inline: auto;
+
+        &::before {
+            content: '';
+            position: absolute;
+            left: 0.75rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: $border-color;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+
+            .timeline-icon {
+                position: absolute;
+                left: -2.75rem;
+                top: 1rem;
+                width: 32px;
+                height: 32px;
+                background: $bg-dark;
+                border: 2px solid $primary;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: $primary;
+                z-index: 1;
+            }
+
+            .timeline-content {
+                padding: 1.25rem;
+                transition: transform 0.2s ease;
+
+                &:hover {
+                    transform: translateX(4px);
+                    border-color: rgba($primary, 0.5);
+                }
+
+                .timeline-time {
+                    display: block;
+                    font-size: 0.75rem;
+                    color: $text-muted;
+                    margin-bottom: 0.5rem;
+                }
+
+                .timeline-title {
+                    margin: 0 0 0.5rem 0;
+                    font-size: 1.1rem;
+                }
+
+                .timeline-desc {
+                    margin: 0;
+                    color: $text-secondary;
+                    font-size: 0.9rem;
+                    line-height: 1.5;
+                }
+            }
+        }
+    }
+}

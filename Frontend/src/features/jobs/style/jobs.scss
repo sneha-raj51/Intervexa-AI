@@ -1,0 +1,336 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* Premium Job Tracker Styles */
+
+.jobs-dashboard-page, .job-workspace-page {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+    min-height: calc(100vh - 64px);
+    
+    @media (max-width: 768px) {
+        padding: 24px 16px 80px;
+    }
+}
+
+/* Dashboard List */
+.jobs-dashboard-page {
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 24px;
+        
+        @media (max-width: 1024px) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        @media (max-width: 600px) { grid-template-columns: minmax(0, 1fr); }
+        
+        .metric-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: 24px 28px;
+            min-height: 120px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            
+            &:hover {
+                background: rgba(255, 255, 255, 0.04);
+                transform: translateY(-2px);
+            }
+            
+            .metric-value {
+                font-size: 2.5rem;
+                font-weight: 700;
+                color: var(--text-primary);
+                line-height: 1;
+                margin-bottom: 8px;
+            }
+            
+            .metric-label {
+                font-size: 0.85rem;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                font-weight: 600;
+            }
+        }
+    }
+    
+    .filters-toolbar {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        padding: 16px 20px;
+        margin-top: 32px;
+        display: grid;
+        grid-template-columns: 1fr 200px;
+        gap: 16px;
+        
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr;
+        }
+        
+        .filter-input, .filter-select {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all var(--transition-fast);
+            
+            &:focus {
+                border-color: var(--border-focus);
+                box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+            }
+        }
+        
+        .filter-input {
+            width: 100%;
+        }
+        
+        .filter-select {
+            width: 100%;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            padding-right: 2.5rem;
+        }
+    }
+    
+    .jobs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 24px;
+        
+        .job-card {
+            background: linear-gradient(180deg, var(--bg-surface-elevated) 0%, rgba(239, 246, 255, 0.5) 100%);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: 24px 28px;
+            transition: all var(--transition-fast);
+            
+            &:hover {
+                border-color: var(--primary);
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-md);
+            }
+        }
+    }
+    
+    .empty-state {
+        background: rgba(255,255,255,0.02);
+        border: 1px dashed var(--border-light);
+        border-radius: var(--radius-xl);
+        padding: 56px 32px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        
+        h2 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+        }
+    }
+}
+
+/* Modal Form */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    padding: 20px;
+    
+    .modal-content {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-xl);
+        padding: 36px 40px;
+        width: 100%;
+        max-width: 900px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+            
+            @media (max-width: 600px) {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            
+            .full-width {
+                grid-column: 1 / -1;
+            }
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .beautiful-input {
+            width: 100%;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            transition: all var(--transition-fast);
+            
+            &:focus {
+                border-color: var(--border-focus);
+                box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+            }
+        }
+        
+        select.beautiful-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            padding-right: 2.5rem;
+        }
+        
+        textarea.beautiful-input {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.5;
+        }
+    }
+}
+
+/* Job Workspace (Detail) */
+.job-workspace-page {
+    .workspace-header {
+        margin-bottom: 32px;
+        padding-bottom: 24px;
+        
+        .badge-select {
+            appearance: none;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            padding: 8px 36px 8px 16px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            outline: none;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 1em;
+            transition: all var(--transition-fast);
+            
+            &:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+            }
+        }
+    }
+    
+    .workspace-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.6fr) minmax(320px, 0.8fr);
+        gap: 28px;
+        
+        @media (max-width: 900px) {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        & > div {
+            min-width: 0;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: 24px 32px;
+        }
+        
+        .btn-prep {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 20px 24px;
+            text-align: left;
+            transition: all var(--transition-fast);
+            
+            &:hover {
+                background: rgba(255, 255, 255, 0.06);
+                border-color: var(--primary);
+                transform: translateX(4px);
+            }
+            
+            h4 {
+                color: var(--text-primary);
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+        }
+        
+        .timeline-card, .notes-card, .overview-card, .resume-assoc-card {
+            padding: 24px;
+            background: linear-gradient(180deg, var(--bg-surface-elevated) 0%, rgba(239, 246, 255, 0.5) 100%);
+        }
+        
+        .notes-card textarea {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            min-height: 120px;
+            width: 100%;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.2s;
+            
+            &:focus {
+                outline: none;
+                border-color: var(--primary);
+            }
+        }
+    }
+}

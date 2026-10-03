@@ -1,0 +1,301 @@
+@use "../../../style/variables" as *;
+
+.insights-page {
+    width: 100%;
+}
+
+.insights-container {
+    width: min(1180px, calc(100% - 48px));
+    margin-inline: auto;
+    padding-block: 48px 80px;
+
+    .insights-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 50vh;
+        p {
+            margin-top: 1rem;
+            color: $text-secondary;
+            font-weight: 500;
+        }
+    }
+
+    .insights-empty {
+        text-align: center;
+        padding: 4rem 2rem;
+        margin-top: 2rem;
+        h2 { margin-bottom: 1rem; }
+        p { margin-bottom: 2rem; color: $text-muted; }
+    }
+
+    .insights-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+
+        h1 { margin: 0 0 0.5rem 0; font-size: 2rem; }
+        p { margin: 0; color: $text-secondary; font-size: 1.1rem; }
+    }
+
+    .insights-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+
+        .hero-card {
+            grid-column: span 8;
+            
+            .flex-row {
+                display: flex;
+                gap: 2rem;
+                align-items: stretch;
+
+                .readiness-block {
+                    flex: 1;
+                    text-align: center;
+                    border-right: 1px solid $border-color;
+                    padding-right: 2rem;
+
+                    h3 { font-size: 1.1rem; color: $text-secondary; margin-bottom: 1rem; }
+                    
+                    .readiness-score-lg {
+                        font-size: 4rem;
+                        font-weight: 700;
+                        color: $primary;
+                        line-height: 1;
+                        margin-bottom: 0.5rem;
+                        
+                        .pct { font-size: 2rem; color: $text-muted; }
+                    }
+                }
+
+                .lists-block {
+                    flex: 2;
+                    display: flex;
+                    gap: 1.5rem;
+
+                    .strengths, .focus-areas {
+                        flex: 1;
+                        h4 { font-size: 1rem; margin-bottom: 1rem; border-bottom: 1px solid $border-color; padding-bottom: 0.5rem; }
+                        ul {
+                            list-style: none; padding: 0; margin: 0;
+                            li { margin-bottom: 0.5rem; font-size: 0.9rem; color: $text-secondary; }
+                        }
+                    }
+                    .strengths li { color: $success !important; }
+                    .focus-areas li { color: $warning !important; }
+                }
+            }
+        }
+
+        .action-card {
+            grid-column: span 4;
+            background: linear-gradient(145deg, rgba($primary, 0.1), rgba($bg-dark, 0.8));
+            border-color: rgba($primary, 0.4);
+            
+            .action-body {
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+                padding: 2rem;
+
+                h2 { font-size: 0.9rem; color: $primary; letter-spacing: 1px; margin-bottom: 1rem; text-transform: uppercase; }
+                h3 { font-size: 1.25rem; margin-bottom: 1rem; }
+                p { color: $text-secondary; font-size: 0.9rem; margin-bottom: 1.5rem; }
+                button { width: 100%; }
+            }
+        }
+
+        .skill-intel-card {
+            grid-column: span 6;
+            
+            .skill-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+
+                .skill-item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 0.75rem;
+                    background: $bg-dark;
+                    border: 1px solid $border-color;
+                    border-radius: 8px;
+
+                    .skill-name { font-weight: 500; font-size: 0.95rem; }
+                    
+                    .badge--strong { background: rgba($success, 0.2); color: $success; }
+                    .badge--developing { background: rgba($primary, 0.2); color: $primary; }
+                    .badge--needs-practice { background: rgba($warning, 0.2); color: $warning; }
+                }
+            }
+        }
+
+        .interview-intel-card {
+            grid-column: span 6;
+
+            .progress-item {
+                margin-bottom: 1.5rem;
+                &:last-child { margin-bottom: 0; }
+                
+                &__labels {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 0.5rem;
+                    font-size: 0.9rem;
+                    font-weight: 500;
+                }
+
+                .progress-bar {
+                    height: 8px;
+                    background: $bg-dark;
+                    border-radius: 4px;
+                    overflow: hidden;
+                    &__fill {
+                        height: 100%;
+                        background: $primary;
+                        border-radius: 4px;
+                        transition: width 0.5s ease-out;
+                    }
+                }
+            }
+        }
+    }
+
+    .insights-bottom {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+
+        .custom-list {
+            list-style: none;
+            padding: 0; margin: 0;
+            li {
+                position: relative;
+                padding-left: 1.5rem;
+                margin-bottom: 1rem;
+                color: $text-secondary;
+                line-height: 1.5;
+                &::before {
+                    content: '→';
+                    position: absolute;
+                    left: 0;
+                    color: $primary;
+                    font-weight: bold;
+                }
+            }
+        }
+
+        .roadmap-timeline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            padding: 1rem 0;
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: $border-color;
+                z-index: 1;
+            }
+
+            .roadmap-step {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                width: 120px;
+
+                .step-marker {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    background: $bg-dark;
+                    border: 3px solid $border-color;
+                    margin-bottom: 0.5rem;
+                }
+
+                .step-content {
+                    h4 { font-size: 0.85rem; margin: 0 0 0.25rem 0; }
+                    span { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; }
+                }
+
+                &.status-completed {
+                    .step-marker { background: $success; border-color: $success; }
+                    span { color: $success; }
+                }
+                &.status-in-progress {
+                    .step-marker { background: $primary; border-color: $primary; box-shadow: 0 0 10px rgba($primary, 0.5); }
+                    span { color: $primary; }
+                }
+                &.status-pending {
+                    span { color: $text-muted; }
+                }
+            }
+        }
+    }
+
+    .patterns-card {
+        .tags-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+
+            .pattern-tag {
+                background: rgba($primary, 0.1);
+                color: $primary;
+                border: 1px solid rgba($primary, 0.3);
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+        }
+    }
+
+    @media (max-width: 992px) {
+        .insights-grid {
+            .hero-card, .action-card, .skill-intel-card, .interview-intel-card {
+                grid-column: span 12;
+            }
+            .hero-card .flex-row {
+                flex-direction: column;
+                .readiness-block {
+                    border-right: none; border-bottom: 1px solid $border-color;
+                    padding-right: 0; padding-bottom: 2rem;
+                }
+            }
+        }
+        .insights-bottom {
+            grid-template-columns: 1fr;
+            .roadmap-timeline {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+                &::before {
+                    top: 0; bottom: 0; left: 10px; width: 2px; height: 100%;
+                }
+                .roadmap-step {
+                    flex-direction: row; width: auto; gap: 1rem; text-align: left;
+                    .step-marker { margin-bottom: 0; }
+                }
+            }
+        }
+    }
+}

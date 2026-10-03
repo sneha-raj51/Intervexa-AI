@@ -1,0 +1,218 @@
+.landing-page {
+    background-color: var(--bg-primary, #0b0c10);
+    color: var(--text-primary, #e0e0e0);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.text-gradient {
+    background: var(--primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.landing-hero {
+    width: 100%;
+    max-width: 1200px;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 2rem;
+    
+    .hero-title {
+        font-size: clamp(3rem, 5vw, 5rem);
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        color: #ffffff;
+    }
+
+    .hero-subtitle {
+        font-size: clamp(1.2rem, 2vw, 1.5rem);
+        color: #9ca3af;
+        max-width: 600px;
+        margin: 0 auto 3rem auto;
+        line-height: 1.5;
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
+.btn-large {
+    padding: 1rem 2.5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+    
+    &:hover {
+        background-color: #2563eb;
+        transform: translateY(-2px);
+    }
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: #e0e0e0;
+    border: 1px solid #4b5563;
+
+    &:hover {
+        background-color: #1f2937;
+        transform: translateY(-2px);
+    }
+}
+
+.btn-glow {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+    &:hover {
+        box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
+    }
+}
+
+.section-title {
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    color: #60a5fa;
+    text-align: center;
+    margin-bottom: 4rem;
+    font-weight: 600;
+}
+
+.landing-how-it-works, .landing-features {
+    width: 100%;
+    max-width: 1200px;
+    padding: 6rem 2rem;
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.step-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 2.5rem;
+    transition: transform 0.3s ease, background 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .step-number {
+        font-size: 3rem;
+        font-weight: 800;
+        color: rgba(255, 255, 255, 0.1);
+        display: block;
+        margin-bottom: 1rem;
+    }
+
+    h3 {
+        font-size: 1.25rem;
+        color: #ffffff;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    p {
+        color: #9ca3af;
+        line-height: 1.6;
+    }
+}
+
+.features-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.feature-pill {
+    background: rgba(59, 130, 246, 0.1);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        background: rgba(59, 130, 246, 0.2);
+        transform: scale(1.05);
+    }
+}
+
+.landing-cta {
+    width: 100%;
+    padding: 8rem 2rem;
+    background: linear-gradient(180deg, rgba(11, 12, 16, 0) 0%, rgba(30, 58, 138, 0.1) 100%);
+    text-align: center;
+    
+    .cta-content {
+        max-width: 800px;
+        margin: 0 auto;
+        
+        h2 {
+            font-size: 1rem;
+            letter-spacing: 0.2em;
+            color: #60a5fa;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+        
+        .cta-large-text {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.2;
+        }
+    }
+}
+
+.landing-footer {
+    width: 100%;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 3rem 2rem;
+    
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        color: #6b7280;
+        
+        .footer-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+    }
+}
+
+.mt-8 { margin-top: 2rem; }

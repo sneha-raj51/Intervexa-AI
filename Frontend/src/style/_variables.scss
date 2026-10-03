@@ -1,0 +1,80 @@
+/* INTERVEXA DESIGN SYSTEM */
+
+/* Sass variable mappings to existing CSS tokens */
+$bg-primary: var(--bg-app);
+$bg-secondary: var(--bg-surface);
+$bg-dark: var(--bg-app);
+$primary: var(--primary);
+$accent: var(--accent);
+$text-primary: var(--text-primary);
+$text-secondary: var(--text-secondary);
+$text-muted: var(--text-muted);
+$border-color: var(--border-light);
+$success: var(--success);
+$warning: var(--warning);
+$danger: var(--danger);
+
+:root {
+  /* Colors */
+  --bg-app: #0A0F1C;
+  --bg-surface: #131B2F;
+  --bg-surface-elevated: #1E293B;
+  --bg-input: #1E293B;
+
+  --primary: #6366F1;
+  --primary-hover: #4F46E5;
+  --accent: #A855F7;
+
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+
+  --border-light: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.15);
+  --border-focus: #6366F1;
+
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+
+  /* RGB tuples for rgba() compositing (hover tints, focus rings, glows) */
+  --primary-rgb: 99, 102, 241;
+  --accent-rgb: 168, 85, 247;
+  --success-rgb: 16, 185, 129;
+  --warning-rgb: 245, 158, 11;
+  --danger-rgb: 239, 68, 68;
+
+  /* Typography */
+  --font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.2);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.16), 0 8px 24px -8px rgba(0, 0, 0, 0.35);
+  --shadow-card-hover: 0 1px 2px rgba(0, 0, 0, 0.2), 0 16px 36px -10px rgba(0, 0, 0, 0.45);
+  --shadow-focus-ring: 0 0 0 3px rgba(var(--primary-rgb), 0.35);
+
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
