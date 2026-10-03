@@ -141,7 +141,10 @@ const resumeAnalysisSchemaZod = z.object({
     sectionAnalysis: z.object({
         summary: z.object({ status: z.string(), observations: z.string(), suggestions: z.string() }),
         experience: z.object({ status: z.string(), observations: z.string(), suggestions: z.string() }),
-        projects: z.object({ status: z.string(), observations: z.string(), suggestions: z.string() })
+        projects: z.object({ status: z.string(), observations: z.string(), suggestions: z.string() }),
+        education: z.object({ status: z.string(), observations: z.string(), suggestions: z.string() }),
+        certifications: z.object({ status: z.string(), observations: z.string(), suggestions: z.string() }),
+        skills: z.object({ status: z.string(), observations: z.string(), suggestions: z.string() })
     }),
     jdIntelligence: z.object({
         requiredSkills: z.array(z.string()),

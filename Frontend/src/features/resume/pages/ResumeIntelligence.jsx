@@ -305,12 +305,18 @@ const ResumeIntelligence = () => {
                             <div className='section-item'>
                                 <div className='section-item__header'>
                                     <h3>SKILLS (Technical & Soft)</h3>
+                                    {analysis.sectionAnalysis?.skills ? <span className='badge badge--status'>{analysis.sectionAnalysis.skills.status}</span> : null}
                                 </div>
                                 <div className='section-item__body'>
                                     {(analysis.jdIntelligence?.requiredSkills?.length > 0 || analysis.jdIntelligence?.preferredSkills?.length > 0 || analysis.matchBreakdown?.matchedSkills?.length > 0) ? (
                                         <>
                                             <p><strong>Identified Technical/Soft Skills:</strong> {(analysis.matchBreakdown?.matchedSkills || []).join(', ') || 'N/A'}</p>
                                             <p><strong>Missing Skills (from JD):</strong> {(analysis.matchBreakdown?.missingSkills || []).join(', ') || 'None'}</p>
+                                        </>
+                                    ) : analysis.sectionAnalysis?.skills ? (
+                                        <>
+                                            <p><strong>Observation:</strong> {analysis.sectionAnalysis.skills.observations}</p>
+                                            <p><strong>Suggestion:</strong> {analysis.sectionAnalysis.skills.suggestions}</p>
                                         </>
                                     ) : (
                                         <p className="text-muted italic">Not detected in this resume.</p>
@@ -340,9 +346,17 @@ const ResumeIntelligence = () => {
                             <div className='section-item'>
                                 <div className='section-item__header'>
                                     <h3>EDUCATION</h3>
+                                    {analysis.sectionAnalysis?.education ? <span className='badge badge--status'>{analysis.sectionAnalysis.education.status}</span> : null}
                                 </div>
                                 <div className='section-item__body'>
-                                    <p className="text-muted italic">Not detected in this resume.</p>
+                                    {analysis.sectionAnalysis?.education ? (
+                                        <>
+                                            <p><strong>Observation:</strong> {analysis.sectionAnalysis.education.observations}</p>
+                                            <p><strong>Suggestion:</strong> {analysis.sectionAnalysis.education.suggestions}</p>
+                                        </>
+                                    ) : (
+                                        <p className="text-muted italic">Not detected in this resume.</p>
+                                    )}
                                 </div>
                             </div>
 
@@ -368,9 +382,17 @@ const ResumeIntelligence = () => {
                             <div className='section-item'>
                                 <div className='section-item__header'>
                                     <h3>CERTIFICATIONS</h3>
+                                    {analysis.sectionAnalysis?.certifications ? <span className='badge badge--status'>{analysis.sectionAnalysis.certifications.status}</span> : null}
                                 </div>
                                 <div className='section-item__body'>
-                                    <p className="text-muted italic">Not detected in this resume.</p>
+                                    {analysis.sectionAnalysis?.certifications ? (
+                                        <>
+                                            <p><strong>Observation:</strong> {analysis.sectionAnalysis.certifications.observations}</p>
+                                            <p><strong>Suggestion:</strong> {analysis.sectionAnalysis.certifications.suggestions}</p>
+                                        </>
+                                    ) : (
+                                        <p className="text-muted italic">Not detected in this resume.</p>
+                                    )}
                                 </div>
                             </div>
 
