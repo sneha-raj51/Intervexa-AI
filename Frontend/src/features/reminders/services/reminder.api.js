@@ -1,17 +1,7 @@
-import axios from "axios";
-import { API_BASE_URL } from "../../../config/api";
-
-const getAuthHeaders = () => {
-    const token = localStorage.getItem("token");
-    return {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    };
-};
+import api from "../../../config/api";
 
 export const getReminders = async () => {
-    const response = await axios.get(`${API_BASE_URL}/reminders`, getAuthHeaders());
+    const response = await api.get("/api/reminders");
     return response.data;
 };
 

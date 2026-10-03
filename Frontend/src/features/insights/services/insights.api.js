@@ -1,17 +1,7 @@
-import axios from "axios";
-import { API_BASE_URL } from "../../../config/api";
-
-const getAuthHeaders = () => {
-    const token = localStorage.getItem("token");
-    return {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    };
-};
+import api from "../../../config/api";
 
 export const getCareerInsights = async (forceRefresh = false) => {
-    const url = `${API_BASE_URL}/insights${forceRefresh ? "?forceRefresh=true" : ""}`;
-    const response = await axios.get(url, getAuthHeaders());
+    const url = `/api/insights${forceRefresh ? "?forceRefresh=true" : ""}`;
+    const response = await api.get(url);
     return response.data;
 };

@@ -71,9 +71,13 @@ const Home = () => {
         if (!jobDescription) return alert("Target Job Description is required.");
         if (!resumeFile && !selfDescription) return alert("Either a Resume or a Self Description is required.");
         
-        const data = await generateReport({ jobDescription, selfDescription, resumeFile, jobId })
-        if (data) {
-            navigate(`/interview/${data._id}`)
+        try {
+            const data = await generateReport({ jobDescription, selfDescription, resumeFile, jobId })
+            if (data) {
+                navigate(`/interview/${data._id}`)
+            }
+        } catch (error) {
+            alert(error.response?.data?.message || "Failed to generate interview strategy. Please try again.")
         }
     }
 
