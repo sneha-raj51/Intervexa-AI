@@ -2,9 +2,151 @@ const { GoogleGenAI } = require("@google/genai")
 const { z } = require("zod")
 const { zodToJsonSchema } = require("zod-to-json-schema")
 
+// GEMINI ISOLATED SETUP
 const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_GENAI_API_KEY
 })
+
+async function executeGeminiWithRetry(apiCall, functionName) {
+    let retries = 2;
+    let baseDelay = 2000;
+    while (retries >= 0) {
+        try {
+            return await apiCall();
+        } catch (error) {
+            const status = error.status || error?.response?.status;
+            
+            let retryDelayMs = null;
+            if (status === 429) {
+                try {
+                    const parsed = JSON.parse(error.message.replace(/^ApiError: /, ''));
+                    const details = parsed?.error?.details || [];
+                    for (const d of details) {
+                        if (d['@type'] === 'type.googleapis.com/google.rpc.RetryInfo' && d.retryDelay) {
+                            retryDelayMs = parseFloat(d.retryDelay.replace('s', '')) * 1000;
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            if (status === 429 || status === 408 || (status >= 500 && status < 600)) {
+                if (retries === 0) {
+                    throw new Error(`AI Service currently unavailable due to high demand. Please try again later.`);
+                }
+                
+                let delay = baseDelay + Math.random() * 500;
+                
+                if (status === 429 && retryDelayMs !== null) {
+                    if (retryDelayMs > 15000) {
+                        throw new Error(`AI Service quota exceeded. Please wait ${Math.ceil(retryDelayMs / 1000)} seconds before trying again.`);
+                    }
+                    delay = Math.max(delay, retryDelayMs);
+                }
+
+                console.log(`Gemini API failed for ${functionName} with status ${status}. Retrying in ${Math.round(delay)}ms... (${retries} retries left)`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+                baseDelay *= 2;
+                retries--;
+            } else {
+                throw new Error(`AI Service error: ${error.message}`);
+            }
+        }
+    }
+}
+
+// OPENROUTER SETUP
+async function executeOpenRouter(prompt, schema, functionName) {
+    let retries = 2;
+    let baseDelay = 2000;
+    while (retries >= 0) {
+        try {
+            const promptWithSchema = prompt + `\n\nRespond ONLY with valid JSON exactly matching this JSON schema:\n${JSON.stringify(zodToJsonSchema(schema))}`;
+            
+            const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    model: "openrouter/free",
+                    messages: [
+                        { role: "user", content: promptWithSchema }
+                    ],
+                    response_format: { type: "json_object" }
+                })
+            });
+
+            if (!response.ok) {
+                const status = response.status;
+                const errorData = await response.text();
+                
+                if (status === 429) {
+                    const retryAfter = response.headers.get('retry-after');
+                    let retryDelayMs = retryAfter ? parseInt(retryAfter) * 1000 : null;
+                    
+                    if (retries === 0) {
+                        throw new Error(`AI Service currently unavailable due to high demand. Please try again later.`);
+                    }
+                    
+                    let delay = baseDelay + Math.random() * 500;
+                    if (retryDelayMs !== null) {
+                        if (retryDelayMs > 15000) {
+                            throw new Error(`AI Service quota exceeded. Please wait ${Math.ceil(retryDelayMs / 1000)} seconds before trying again.`);
+                        }
+                        delay = Math.max(delay, retryDelayMs);
+                    }
+                    console.log(`OpenRouter API failed for ${functionName} with status ${status}. Retrying in ${Math.round(delay)}ms...`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    baseDelay *= 2;
+                    retries--;
+                    continue;
+                }
+                
+                if (status === 408 || (status >= 500 && status < 600)) {
+                    if (retries === 0) {
+                        throw new Error(`AI Service currently unavailable. Please try again later.`);
+                    }
+                    let delay = baseDelay + Math.random() * 500;
+                    console.log(`OpenRouter API failed for ${functionName} with status ${status}. Retrying in ${Math.round(delay)}ms...`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    baseDelay *= 2;
+                    retries--;
+                    continue;
+                }
+                
+                throw new Error(`OpenRouter error: ${status} ${errorData}`);
+            }
+
+            const data = await response.json();
+            const content = data.choices[0].message.content;
+            
+            let jsonString = content.trim();
+            if (jsonString.startsWith('```json')) {
+                jsonString = jsonString.substring(7, jsonString.length - 3).trim();
+            } else if (jsonString.startsWith('```')) {
+                jsonString = jsonString.substring(3, jsonString.length - 3).trim();
+            }
+            
+            return JSON.parse(jsonString);
+            
+        } catch (error) {
+            if (error.message.startsWith('AI Service') || error.message.startsWith('OpenRouter error')) {
+                throw error;
+            }
+            
+            if (retries === 0) {
+                throw new Error(`AI Service error: ${error.message}`);
+            }
+            
+            let delay = baseDelay + Math.random() * 500;
+            console.log(`OpenRouter network/parse error for ${functionName}: ${error.message}. Retrying in ${Math.round(delay)}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            baseDelay *= 2;
+            retries--;
+        }
+    }
+}
 
 
 const interviewReportSchema = z.object({
@@ -32,38 +174,12 @@ const interviewReportSchema = z.object({
 })
 
 async function generateInterviewReport({ resume, selfDescription, jobDescription }) {
-
-
     const prompt = `Generate an interview report for a candidate with the following details:
                         Resume: ${resume}
                         Self Description: ${selfDescription}
                         Job Description: ${jobDescription}
 `
-
-    let response;
-    let retries = 3;
-    while (retries > 0) {
-        try {
-            response = await ai.models.generateContent({
-                model: "gemini-3-flash-preview",
-                contents: prompt,
-                config: {
-                    responseMimeType: "application/json",
-                    responseSchema: zodToJsonSchema(interviewReportSchema),
-                }
-            })
-            break;
-        } catch (error) {
-            retries--;
-            if (retries === 0) throw error;
-            console.log(`Gemini API failed. Retrying... (${retries} retries left)`);
-            await new Promise(resolve => setTimeout(resolve, 3000));
-        }
-    }
-
-    return JSON.parse(response.text)
-
-
+    return await executeOpenRouter(prompt, interviewReportSchema, 'generateInterviewReport');
 }
 
 
@@ -120,28 +236,7 @@ async function analyzeResume({ resume, jobDescription }) {
     6. Properly calculate past/current/future dates based ONLY on the "Current Date" provided above. For example, if current date is Oct 2026, then July 2026 is in the PAST. DO NOT mark past dates as future dates.
     `
 
-    let response;
-    let retries = 3;
-    while (retries > 0) {
-        try {
-            response = await ai.models.generateContent({
-                model: "gemini-3-flash-preview",
-                contents: prompt,
-                config: {
-                    responseMimeType: "application/json",
-                    responseSchema: zodToJsonSchema(resumeAnalysisSchemaZod),
-                }
-            })
-            break;
-        } catch (error) {
-            retries--;
-            if (retries === 0) throw error;
-            console.log(`Gemini API failed for analyzeResume. Retrying... (${retries} retries left)`);
-            await new Promise(resolve => setTimeout(resolve, 3000));
-        }
-    }
-
-    return JSON.parse(response.text)
+    return await executeOpenRouter(prompt, resumeAnalysisSchemaZod, 'analyzeResume');
 }
 
 const mockQuestionsSchemaZod = z.object({
@@ -169,27 +264,7 @@ async function generateMockQuestions({ type, difficulty, questionCount, jobDescr
     3. Avoid repetitive questions.
     `
 
-    let response;
-    let retries = 3;
-    while (retries > 0) {
-        try {
-            response = await ai.models.generateContent({
-                model: "gemini-3-flash-preview",
-                contents: prompt,
-                config: {
-                    responseMimeType: "application/json",
-                    responseSchema: zodToJsonSchema(mockQuestionsSchemaZod),
-                }
-            })
-            break;
-        } catch (error) {
-            retries--;
-            if (retries === 0) throw error;
-            console.log(`Gemini API failed for generateMockQuestions. Retrying... (${retries} left)`);
-            await new Promise(resolve => setTimeout(resolve, 3000));
-        }
-    }
-    return JSON.parse(response.text)
+    return await executeOpenRouter(prompt, mockQuestionsSchemaZod, 'generateMockQuestions');
 }
 
 const mockEvaluationSchemaZod = z.object({
@@ -217,27 +292,7 @@ async function evaluateMockAnswer({ question, category, userAnswer }) {
     4. If the question is Technical, mark all STAR fields as N/A.
     `
 
-    let response;
-    let retries = 3;
-    while (retries > 0) {
-        try {
-            response = await ai.models.generateContent({
-                model: "gemini-3-flash-preview",
-                contents: prompt,
-                config: {
-                    responseMimeType: "application/json",
-                    responseSchema: zodToJsonSchema(mockEvaluationSchemaZod),
-                }
-            })
-            break;
-        } catch (error) {
-            retries--;
-            if (retries === 0) throw error;
-            console.log(`Gemini API failed for evaluateMockAnswer. Retrying... (${retries} left)`);
-            await new Promise(resolve => setTimeout(resolve, 3000));
-        }
-    }
-    return JSON.parse(response.text)
+    return await executeOpenRouter(prompt, mockEvaluationSchemaZod, 'evaluateMockAnswer');
 }
 
 const tailoringSuggestionsSchemaZod = z.object({
@@ -264,27 +319,7 @@ async function generateTailoringSuggestions({ resume, jobDescription }) {
     Output a list of specific, actionable suggestions.
     `;
 
-    let response;
-    let retries = 3;
-    while (retries > 0) {
-        try {
-            response = await ai.models.generateContent({
-                model: "gemini-3-flash-preview",
-                contents: prompt,
-                config: {
-                    responseMimeType: "application/json",
-                    responseSchema: zodToJsonSchema(tailoringSuggestionsSchemaZod),
-                }
-            })
-            break;
-        } catch (error) {
-            retries--;
-            if (retries === 0) throw error;
-            console.log(`Gemini API failed for generateTailoringSuggestions. Retrying... (${retries} left)`);
-            await new Promise(resolve => setTimeout(resolve, 3000));
-        }
-    }
-    return JSON.parse(response.text)
+    return await executeOpenRouter(prompt, tailoringSuggestionsSchemaZod, 'generateTailoringSuggestions');
 }
 
 const careerInsightsSchemaZod = z.object({
@@ -326,27 +361,7 @@ async function analyzeCareerInsights({ summaryData }) {
     4. Provide actionable and realistic recommendations.
     `;
 
-    let response;
-    let retries = 3;
-    while (retries > 0) {
-        try {
-            response = await ai.models.generateContent({
-                model: "gemini-3-flash-preview",
-                contents: prompt,
-                config: {
-                    responseMimeType: "application/json",
-                    responseSchema: zodToJsonSchema(careerInsightsSchemaZod),
-                }
-            })
-            break;
-        } catch (error) {
-            retries--;
-            if (retries === 0) throw error;
-            console.log(`Gemini API failed for analyzeCareerInsights. Retrying... (${retries} left)`);
-            await new Promise(resolve => setTimeout(resolve, 3000));
-        }
-    }
-    return JSON.parse(response.text)
+    return await executeOpenRouter(prompt, careerInsightsSchemaZod, 'analyzeCareerInsights');
 }
 
 module.exports = { generateInterviewReport, analyzeResume, generateMockQuestions, evaluateMockAnswer, generateTailoringSuggestions, analyzeCareerInsights }
