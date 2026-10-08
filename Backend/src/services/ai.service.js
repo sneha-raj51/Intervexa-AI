@@ -1,58 +1,8 @@
-const { GoogleGenAI } = require("@google/genai")
+
 const { z } = require("zod")
 const { zodToJsonSchema } = require("zod-to-json-schema")
 
-// GEMINI ISOLATED SETUP
-const ai = new GoogleGenAI({
-    apiKey: process.env.GOOGLE_GENAI_API_KEY
-})
 
-async function executeGeminiWithRetry(apiCall, functionName) {
-    let retries = 2;
-    let baseDelay = 2000;
-    while (retries >= 0) {
-        try {
-            return await apiCall();
-        } catch (error) {
-            const status = error.status || error?.response?.status;
-            
-            let retryDelayMs = null;
-            if (status === 429) {
-                try {
-                    const parsed = JSON.parse(error.message.replace(/^ApiError: /, ''));
-                    const details = parsed?.error?.details || [];
-                    for (const d of details) {
-                        if (d['@type'] === 'type.googleapis.com/google.rpc.RetryInfo' && d.retryDelay) {
-                            retryDelayMs = parseFloat(d.retryDelay.replace('s', '')) * 1000;
-                        }
-                    }
-                } catch(e) {}
-            }
-
-            if (status === 429 || status === 408 || (status >= 500 && status < 600)) {
-                if (retries === 0) {
-                    throw new Error(`AI Service currently unavailable due to high demand. Please try again later.`);
-                }
-                
-                let delay = baseDelay + Math.random() * 500;
-                
-                if (status === 429 && retryDelayMs !== null) {
-                    if (retryDelayMs > 15000) {
-                        throw new Error(`AI Service quota exceeded. Please wait ${Math.ceil(retryDelayMs / 1000)} seconds before trying again.`);
-                    }
-                    delay = Math.max(delay, retryDelayMs);
-                }
-
-                console.log(`Gemini API failed for ${functionName} with status ${status}. Retrying in ${Math.round(delay)}ms... (${retries} retries left)`);
-                await new Promise(resolve => setTimeout(resolve, delay));
-                baseDelay *= 2;
-                retries--;
-            } else {
-                throw new Error(`AI Service error: ${error.message}`);
-            }
-        }
-    }
-}
 
 // OPENROUTER SETUP
 async function executeOpenRouter(prompt, schema, functionName) {
@@ -69,7 +19,7 @@ async function executeOpenRouter(prompt, schema, functionName) {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    model: "openrouter/free",
+                    model: "liquid/lfm-2.5-2.6b:free",
                     messages: [
                         { role: "user", content: promptWithSchema }
                     ],
